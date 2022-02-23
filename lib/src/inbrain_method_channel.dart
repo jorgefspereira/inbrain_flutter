@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import 'inbrain_platform_interface.dart';
+import 'inbrain_survey.dart';
 
 class InBrainMethodChannel extends InBrainPlatformInterface {
   final MethodChannel _channel = const MethodChannel('inbrain_flutter');
@@ -50,7 +51,7 @@ class InBrainMethodChannel extends InBrainPlatformInterface {
   }
 
   @override
-  Future<void> showNativeSurvey(String id, String placementId) async {
+  Future<void> showNativeSurvey({required String id, String? placementId}) async {
     return _channel.invokeMethod(
       'showNativeSurvey',
       <String, dynamic>{'id': id, 'placementId': placementId},
@@ -70,6 +71,25 @@ class InBrainMethodChannel extends InBrainPlatformInterface {
         break;
       case "onDidFailToReceiveRewards":
         onDidFailToReceiveRewards?.call(call.arguments);
+        break;
+      case "onNativeSurveysLoadingStarted":
+        onNativeSurveysLoadingStarted?.call();
+        break;
+      case "onNativeSurveysReceived":
+        final jsonSurveys = call.arguments["surveys"];
+        final placementId = call.arguments["placementId"];
+
+        List<InBrainSurvey> surveys = [];
+
+        for (var item in jsonSurveys) {
+          final s = InBrainSurvey.fromMap(item);
+          surveys.add(s);
+        }
+
+        onNativeSurveysReceived?.call(surveys, placementId);
+        break;
+      case "onFailedToReceiveNativeSurveys":
+        onFailedToReceiveNativeSurveys?.call(call.arguments);
         break;
       default:
         throw MissingPluginException('${call.method} was invoked but has no handler');

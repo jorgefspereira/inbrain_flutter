@@ -62,9 +62,9 @@ public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate
         
         case "showNativeSurvey":
             if let arguments = call.arguments as? Dictionary<String, Any>,
-               let surveyId = arguments["id"] as? String,
-               let placementId = arguments["placementId"] as? String {
+               let surveyId = arguments["id"] as? String {
                 let controller = UIApplication.shared.keyWindow!.rootViewController!
+                let placementId = arguments["placementId"] as? String
                 inBrain.showNativeSurveyWith(id: surveyId, placementId: placementId, from: controller)
             }
             

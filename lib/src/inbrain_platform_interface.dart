@@ -72,7 +72,7 @@ abstract class InBrainPlatformInterface extends PlatformInterface {
     throw UnimplementedError('getNativeSurveys() has not been implemented.');
   }
 
-  Future<void> showNativeSurvey(String id, String placementId) async {
+  Future<void> showNativeSurvey({required String id, String? placementId}) async {
     throw UnimplementedError('showNativeSurvey() has not been implemented.');
   }
 }

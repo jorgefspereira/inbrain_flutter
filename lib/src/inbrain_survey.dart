@@ -19,13 +19,13 @@ class InBrainSurvey {
     required this.value,
   });
 
-  factory InBrainSurvey.fromMap(Map<String, dynamic> map) {
+  factory InBrainSurvey.fromMap(dynamic map) {
     return InBrainSurvey(
       id: map['id'],
       placementId: map['placementId'],
       rank: map['rank'] ?? 0,
       time: map['time'] ?? 0,
-      value: map['value'] ?? 0,
+      value: map['value'] ?? 0.0,
     );
   }
 

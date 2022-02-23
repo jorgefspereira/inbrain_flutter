@@ -26,8 +26,8 @@ class InBrain {
     return platform.getNativeSurveys();
   }
 
-  Future<void> showNativeSurvey(String id, String placementId) async {
-    return platform.showNativeSurvey(id, placementId);
+  Future<void> showNativeSurvey({required String id, String? placementId}) async {
+    return platform.showNativeSurvey(id: id, placementId: placementId);
   }
 
   void onSurveyClosed(InBrainClosedCallback listener) => platform.onSurveyClosed = listener;
