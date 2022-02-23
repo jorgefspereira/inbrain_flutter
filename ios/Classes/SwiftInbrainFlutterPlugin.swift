@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import InBrainSurveys_SDK_Swift
 
-public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate {
+public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate, NativeSurveyDelegate {
     
     let channel: FlutterMethodChannel!
     var result: FlutterResult!
@@ -40,6 +40,7 @@ public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate
             }
             try! inBrain.setLanguage("en-us")
             inBrain.inBrainDelegate = self;
+            inBrain.nativeSurveysDelegate = self;
             
         case "showSurveys":
             inBrain.showSurveys()
@@ -49,10 +50,22 @@ public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate
                 result(hasSurveys);
             }
                 
+            
         case "setUserId":
             if let arguments = call.arguments as? Dictionary<String, Any>,
                let userId = arguments["userId"] as? String {
                 inBrain.set(userID: userId)
+            }
+            
+        case "getNativeSurveys":
+            inBrain.getNativeSurveys()
+        
+        case "showNativeSurvey":
+            if let arguments = call.arguments as? Dictionary<String, Any>,
+               let surveyId = arguments["id"] as? String,
+               let placementId = arguments["placementId"] as? String {
+                let controller = UIApplication.shared.keyWindow!.rootViewController!
+                inBrain.showNativeSurveyWith(id: surveyId, placementId: placementId, from: controller)
             }
             
         default:
@@ -61,7 +74,7 @@ public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate
     }
 
     //////////////////////////////////////////
-    //MARK: InBrainDelegate
+    //MARK: - InBrainDelegate
     //////////////////////////////////////////
     
     public func didFailToReceiveRewards(error: Error) {
@@ -87,5 +100,35 @@ public class SwiftInbrainFlutterPlugin: NSObject, FlutterPlugin, InBrainDelegate
     
     public func surveysClosedFromPage(byWebView: Bool, completedSurvey: Bool) {
         channel.invokeMethod("onSurveyClosedFromPage", arguments: completedSurvey)
+    }
+    
+    //////////////////////////////////////////
+    //MARK: - NativeSurveysDelegate
+    //////////////////////////////////////////
+    
+    public func nativeSurveysLoadingStarted(placementId: String?) {
+        channel.invokeMethod("onNativeSurveysLoadingStarted", arguments: placementId);
+    }
+
+    public func nativeSurveysReceived(_ surveys: [InBrainNativeSurvey], placementId: String?) {
+        var result = [[String:Any?]]();
+        
+        for item in surveys {
+            var it = [String:Any?]();
+            it["id"] = item.id;
+            it["time"] = item.time;
+            it["rank"] = item.rank;
+            it["value"] = item.value;
+            it["placementId"] = item.placementId;
+            result.append(it);
+        }
+        
+        let arguments : [String: Any?] = ["surveys": result, "placementId": placementId];
+        channel.invokeMethod("onNativeSurveysReceived", arguments: arguments);
+    }
+       
+    public func failedToReceiveNativeSurveys(error: Error, placementId: String?) {
+        let arguments : [String: Any?] = ["error": error.localizedDescription, "placementId": placementId];
+        channel.invokeMethod("onFailedToReceiveNativeSurveys", arguments: arguments);
     }
 }

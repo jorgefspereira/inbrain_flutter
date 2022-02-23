@@ -44,6 +44,19 @@ class InBrainMethodChannel extends InBrainPlatformInterface {
     return await _channel.invokeMethod('checkForAvailableSurveys');
   }
 
+  @override
+  Future<void> getNativeSurveys() async {
+    return _channel.invokeMethod('getNativeSurveys');
+  }
+
+  @override
+  Future<void> showNativeSurvey(String id, String placementId) async {
+    return _channel.invokeMethod(
+      'showNativeSurvey',
+      <String, dynamic>{'id': id, 'placementId': placementId},
+    );
+  }
+
   Future<void> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "onSurveyClosed":

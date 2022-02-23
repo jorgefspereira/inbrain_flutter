@@ -22,11 +22,25 @@ class InBrain {
     return platform.setUserId(userId);
   }
 
-  void onSurveyClosed(InBrainSurveyClosedCallback listener) => platform.onSurveyClosed = listener;
+  Future<void> getNativeSurveys() async {
+    return platform.getNativeSurveys();
+  }
 
-  void onSurveyClosedFromPage(InBrainSurveyClosedCallback listener) => platform.onSurveyClosedFromPage = listener;
+  Future<void> showNativeSurvey(String id, String placementId) async {
+    return platform.showNativeSurvey(id, placementId);
+  }
 
-  void onDidReceiveRewards(InBrainSuccessRewardsCallback listener) => platform.onDidReceiveRewards = listener;
+  void onSurveyClosed(InBrainClosedCallback listener) => platform.onSurveyClosed = listener;
 
-  void onDidFailToReceiveRewards(InBrainErrorRewardsCallback listener) => platform.onDidFailToReceiveRewards = listener;
+  void onSurveyClosedFromPage(InBrainClosedCallback listener) => platform.onSurveyClosedFromPage = listener;
+
+  void onDidReceiveRewards(InBrainRewardCallback listener) => platform.onDidReceiveRewards = listener;
+
+  void onDidFailToReceiveRewards(InBrainErrorCallback listener) => platform.onDidFailToReceiveRewards = listener;
+
+  void onNativeSurveysLoadingStarted(InBrainVoidCallback listener) => platform.onNativeSurveysLoadingStarted = listener;
+
+  void onNativeSurveysReceived(InBrainNativeSurveysCallback listener) => platform.onNativeSurveysReceived = listener;
+
+  void onFailedToReceiveNativeSurveys(InBrainErrorCallback listener) => platform.onFailedToReceiveNativeSurveys = listener;
 }
